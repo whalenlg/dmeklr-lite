@@ -18,8 +18,15 @@ Third-party components are listed in [NOTICE.txt](NOTICE.txt).
 ## Getting it
 
 Download from the [Releases page](https://github.com/whalenlg/dmeklr-lite/releases):
-`dmeklr-lite-<version>-macos-arm64.tar.gz`, `-linux-x86_64.tar.gz`
-(glibc 2.35 or newer) or `-windows-x86_64.zip`. You need Node.js 18 or
+
+| Platform | Archive |
+|---|---|
+| macOS (Apple Silicon) | `dmeklr-lite-<version>-macos-arm64.tar.gz` |
+| Linux x86_64: Arch, Ubuntu 22.04 or newer, Debian 12, Fedora, and any other with glibc 2.35+ | `dmeklr-lite-<version>-linux-x86_64.tar.gz` |
+| Windows x86_64 | `dmeklr-lite-<version>-windows-x86_64.zip` |
+
+There is one Linux package for every distribution; each release is
+tested on a clean Arch Linux and a clean Ubuntu. You need Node.js 18 or
 newer, Python (for the annotated listings and the MAPS tabs' graphs), and
 ROM images of your own.
 
