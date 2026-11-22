@@ -1,0 +1,93 @@
+DME+KLR LITE - LICENSE AGREEMENT
+
+Copyright (c) 2026 whalenlg (https://github.com/whalenlg). All rights
+reserved, except as granted below.
+
+"The Software" means the compiled simulators, the bridge and scripts, the
+dashboard build and the documentation in this package, other than the
+Third-Party Material listed in section 5. By installing or using the
+Software you agree to these terms. If you don't agree, don't use it.
+
+1. WHAT YOU MAY DO
+   You may download, install and use the Software free of charge for your
+   own personal, non-commercial purposes: studying, testing, diagnosing
+   and tuning your own vehicles and engine control units, and education
+   and research. You may make copies for those purposes on computers you
+   use.
+
+2. WHAT YOU MAY NOT DO
+   You may not, and may not let anyone else:
+   a. distribute, publish, sell, rent, lend, sublicense or otherwise make
+      the Software or any part of it available to others, including by
+      hosting it for others to use over a network. Point others to the
+      official download at https://github.com/whalenlg/dmeklr-lite instead;
+   b. use the Software commercially, including in a paid service, a
+      product, or work done for a customer, without written permission;
+   c. reverse engineer, decompile or disassemble the compiled simulators,
+      or otherwise try to recover their source code, the hardware designs
+      they were built from, or their internal structure, except to the
+      extent applicable law expressly permits it in spite of this
+      limitation;
+   d. modify the Software or make works based on it, except for the
+      configuration, data, logs and snapshots you make with it in normal
+      use;
+   e. remove or change any copyright, license or other notices in it.
+
+3. OWNERSHIP
+   The Software is licensed, not sold. Its author keeps all rights, title
+   and interest in it, including its source code, which is not published.
+   Logs, snapshots and other data you produce with the Software are yours.
+
+4. ROM IMAGES AND OTHER FIRMWARE
+   The package includes no engine control unit firmware. The Software runs
+   images of it that you supply yourself (in bin_images/, or loaded from the
+   dashboard). That firmware is NOT the author's work and is NOT covered by
+   this license. It is the property of its respective owners, which may
+   include Robert Bosch GmbH, Dr. Ing. h.c. F. Porsche AG and the makers of
+   aftermarket chips. No rights of any kind in it are granted to you, by
+   the author or anyone else. Obtaining and using it is at your own risk
+   and responsibility, under the law that applies to you; the author makes
+   no claim to it and gives no assurance that you may use it.
+   The disassembly workbooks in dme/disassemble/annotations/ and
+   klr/disassemble/annotations/ hold only the author's annotations (labels,
+   names and comments, keyed by address), not the firmware's code or data.
+   The Software fills them in from an image you supply, on your computer,
+   and only when that image is the one they describe. The listings and
+   workbooks made that way contain your copy of the firmware and are, as
+   to that firmware, subject to this section.
+   Product and company names are trademarks of their owners and are used
+   only to identify the hardware the Software simulates; no affiliation or
+   endorsement is implied.
+
+5. THIRD-PARTY MATERIAL
+   Components made by others (the Verilator run-time library, React, React
+   DOM, Recharts, and the Share Tech Mono and Orbitron fonts; see
+   NOTICE.txt) are under their own licenses, which govern your use of
+   them. Nothing here limits the rights those licenses give you. The
+   Verilator run-time library is used under the Perl Artistic License 2.0.
+
+6. NO WARRANTY
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+   OR IMPLIED, INCLUDING THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+   PARTICULAR PURPOSE AND NON-INFRINGEMENT. THE SOFTWARE SIMULATES ENGINE
+   CONTROL HARDWARE AND MAY BE WRONG. DO NOT RELY ON IT FOR ANYTHING THAT
+   AFFECTS A VEHICLE'S SAFETY, EMISSIONS COMPLIANCE OR ROADWORTHINESS.
+   CHANGES YOU MAKE TO A REAL VEHICLE OR CONTROL UNIT ARE AT YOUR OWN
+   RISK.
+
+7. LIMITATION OF LIABILITY
+   TO THE EXTENT THE LAW ALLOWS, THE AUTHOR IS NOT LIABLE FOR ANY CLAIM,
+   DAMAGES OR OTHER LIABILITY, INCLUDING DAMAGE TO ANY VEHICLE, ENGINE OR
+   OTHER PROPERTY, ARISING FROM THE SOFTWARE OR ITS USE.
+
+8. TERMINATION
+   This license ends automatically if you break its terms. You must then
+   stop using the Software and delete your copies. Sections 3, 4, 6 and 7
+   continue to apply after it ends.
+
+9. CHANGES
+   Later releases may come with different terms. The terms included with
+   a release apply to that release.
+
+For permission to do anything this license doesn't allow, contact the
+author through https://github.com/whalenlg.
