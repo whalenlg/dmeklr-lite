@@ -35,7 +35,10 @@ ROM images of your own.
 The packages ship no ROM images. Put dumps of your DME and KLR EPROMs in
 the package's `bin_images/dme` and `bin_images/klr` folders (a `.bin`,
 Intel HEX or `.mem`, any name), or load them from the dashboard. Images
-are shared in the [944 Turbo ROM thread on carpokes](https://carpokes.com/viewtopic.php?t=4424).
+are shared in the 944 Turbo ROM thread on carpokes. The best-known KLR
+images there are `klr_1267355131.bin` (1986), `Stock1987_951KLR.bin` (1987)
+and `89KLR.BIN` (1989). **The 86KLR.BIN file shown is invalid.**
+[944 Turbo ROM thread on carpokes](https://carpokes.com/viewtopic.php?t=4424).
 When your image is one of the standard ones ('86, '89 and Performance DME;
 '86, '87 and '89 KLR) it is recognized by its contents, and its annotated
 disassembly (labels and comments) is made from it on your computer. A

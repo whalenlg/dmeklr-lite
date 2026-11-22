@@ -142,7 +142,7 @@ newer: Ubuntu 22.04, Arch, ...) and Windows x86_64. Each is one archive,
 #### Downloading a release from the command line
 
 The release archives are public, so no GitHub login is needed. The examples
-use release `v1.0.5`; for another release, change only the `V` line at the top of the block (the
+use release `v1.0.6`; for another release, change only the `V` line at the top of the block (the
 [Releases page](https://github.com/whalenlg/dmeklr-lite/releases) lists
 them).
 
@@ -154,14 +154,14 @@ first time, only the last line (from the package folder) is needed.
 
 | Platform | Archive |
 |---|---|
-| macOS (Apple Silicon) | `dmeklr-lite-v1.0.5-macos-arm64.tar.gz` |
-| Linux x86_64 | `dmeklr-lite-v1.0.5-linux-x86_64.tar.gz` |
-| Windows x86_64 | `dmeklr-lite-v1.0.5-windows-x86_64.zip` |
+| macOS (Apple Silicon) | `dmeklr-lite-v1.0.6-macos-arm64.tar.gz` |
+| Linux x86_64 | `dmeklr-lite-v1.0.6-linux-x86_64.tar.gz` |
+| Windows x86_64 | `dmeklr-lite-v1.0.6-windows-x86_64.zip` |
 
 **macOS** (Terminal):
 
 ```sh
-V=v1.0.5
+V=v1.0.6
 curl -LO https://github.com/whalenlg/dmeklr-lite/releases/download/$V/dmeklr-lite-$V-macos-arm64.tar.gz
 tar -xzf dmeklr-lite-$V-macos-arm64.tar.gz
 cd dmeklr-lite-$V-macos-arm64
@@ -172,7 +172,7 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 **Linux:**
 
 ```sh
-V=v1.0.5
+V=v1.0.6
 curl -LO https://github.com/whalenlg/dmeklr-lite/releases/download/$V/dmeklr-lite-$V-linux-x86_64.tar.gz
 tar -xzf dmeklr-lite-$V-linux-x86_64.tar.gz
 cd dmeklr-lite-$V-linux-x86_64
@@ -193,13 +193,13 @@ irm https://raw.githubusercontent.com/whalenlg/dmeklr-lite/main/install/install_
 Run it again to update. Afterwards, start it with the desktop shortcut.
 For a particular release or folder, download
 `install/install_lite_windows.ps1` and run
-`powershell -ExecutionPolicy Bypass -File install_lite_windows.ps1 -Version v1.0.5 -Dir C:\dmeklr`
+`powershell -ExecutionPolicy Bypass -File install_lite_windows.ps1 -Version v1.0.6 -Dir C:\dmeklr`
 (`-Help` lists the options). By hand, the same steps are:
 
 ```powershell
 cd $HOME
 $ProgressPreference = 'SilentlyContinue'   # Invoke-WebRequest is very slow without it
-$V = "v1.0.5"
+$V = "v1.0.6"
 Invoke-WebRequest https://github.com/whalenlg/dmeklr-lite/releases/download/$V/dmeklr-lite-$V-windows-x86_64.zip -OutFile dmeklr-lite-$V-windows-x86_64.zip
 Expand-Archive dmeklr-lite-$V-windows-x86_64.zip -DestinationPath .
 cd dmeklr-lite-$V-windows-x86_64
@@ -214,7 +214,7 @@ then a new PowerShell window).
 With the [GitHub CLI](https://cli.github.com) (`gh`) installed, this
 downloads the latest release's archive for one platform on any system
 (`linux-x86_64` or `windows-x86_64` in place of `macos-arm64` for the
-others; put a tag such as `v1.0.5` after `download` for a particular one):
+others; put a tag such as `v1.0.6` after `download` for a particular one):
 
 ```sh
 gh release download -R whalenlg/dmeklr-lite -p '*macos-arm64*'
@@ -1074,7 +1074,10 @@ The lite package includes no ROM images; the firmware belongs to Bosch,
 Porsche and the tuners who made it. Supply your own:
 
 1. Get dumps of the DME and KLR EPROMs: read your own chips, or find the
-   images in the [944 Turbo ROM thread on carpokes](https://carpokes.com/viewtopic.php?t=4424).
+   images in the 944 Turbo ROM thread on carpokes. The best-known KLR
+   images there are `klr_1267355131.bin` (1986), `Stock1987_951KLR.bin`
+   (1987) and `89KLR.BIN` (1989). **The 86KLR.BIN file shown is invalid.**
+   [944 Turbo ROM thread on carpokes](https://carpokes.com/viewtopic.php?t=4424)
 2. Put them in the package's `bin_images/dme` and `bin_images/klr` folders
    (a raw `.bin`, an Intel HEX `.hex` or a `.mem`, under any name) and start
    `run_lite.sh` / `run_lite.cmd`, or load them from the dashboard with
