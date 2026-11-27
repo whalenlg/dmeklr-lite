@@ -142,7 +142,7 @@ newer: Ubuntu 22.04, Arch, ...) and Windows x86_64. Each is one archive,
 #### Downloading a release from the command line
 
 The release archives are public, so no GitHub login is needed. The examples
-use release `v1.0.8`; for another release, change only the `V` line at the top of the block (the
+use release `v1.0.9`; for another release, change only the `V` line at the top of the block (the
 [Releases page](https://github.com/whalenlg/dmeklr-lite/releases) lists
 them).
 
@@ -154,14 +154,14 @@ first time, only the last line (from the package folder) is needed.
 
 | Platform | Archive |
 |---|---|
-| macOS (Apple Silicon) | `dmeklr-lite-v1.0.8-macos-arm64.tar.gz` |
-| Linux x86_64 | `dmeklr-lite-v1.0.8-linux-x86_64.tar.gz` |
-| Windows x86_64 | `dmeklr-lite-v1.0.8-windows-x86_64.zip` |
+| macOS (Apple Silicon) | `dmeklr-lite-v1.0.9-macos-arm64.tar.gz` |
+| Linux x86_64 | `dmeklr-lite-v1.0.9-linux-x86_64.tar.gz` |
+| Windows x86_64 | `dmeklr-lite-v1.0.9-windows-x86_64.zip` |
 
 **macOS** (Terminal):
 
 ```sh
-V=v1.0.8
+V=v1.0.9
 curl -LO https://github.com/whalenlg/dmeklr-lite/releases/download/$V/dmeklr-lite-$V-macos-arm64.tar.gz
 tar -xzf dmeklr-lite-$V-macos-arm64.tar.gz
 cd dmeklr-lite-$V-macos-arm64
@@ -172,7 +172,7 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 **Linux:**
 
 ```sh
-V=v1.0.8
+V=v1.0.9
 curl -LO https://github.com/whalenlg/dmeklr-lite/releases/download/$V/dmeklr-lite-$V-linux-x86_64.tar.gz
 tar -xzf dmeklr-lite-$V-linux-x86_64.tar.gz
 cd dmeklr-lite-$V-linux-x86_64
@@ -193,13 +193,13 @@ irm https://raw.githubusercontent.com/whalenlg/dmeklr-lite/main/install/install_
 Run it again to update. Afterwards, start it with the desktop shortcut.
 For a particular release or folder, download
 `install/install_lite_windows.ps1` and run
-`powershell -ExecutionPolicy Bypass -File install_lite_windows.ps1 -Version v1.0.8 -Dir C:\dmeklr`
+`powershell -ExecutionPolicy Bypass -File install_lite_windows.ps1 -Version v1.0.9 -Dir C:\dmeklr`
 (`-Help` lists the options). By hand, the same steps are:
 
 ```powershell
 cd $HOME
 $ProgressPreference = 'SilentlyContinue'   # Invoke-WebRequest is very slow without it
-$V = "v1.0.8"
+$V = "v1.0.9"
 Invoke-WebRequest https://github.com/whalenlg/dmeklr-lite/releases/download/$V/dmeklr-lite-$V-windows-x86_64.zip -OutFile dmeklr-lite-$V-windows-x86_64.zip
 Expand-Archive dmeklr-lite-$V-windows-x86_64.zip -DestinationPath .
 cd dmeklr-lite-$V-windows-x86_64
@@ -214,7 +214,7 @@ then a new PowerShell window).
 With the [GitHub CLI](https://cli.github.com) (`gh`) installed, this
 downloads the latest release's archive for one platform on any system
 (`linux-x86_64` or `windows-x86_64` in place of `macos-arm64` for the
-others; put a tag such as `v1.0.8` after `download` for a particular one):
+others; put a tag such as `v1.0.9` after `download` for a particular one):
 
 ```sh
 gh release download -R whalenlg/dmeklr-lite -p '*macos-arm64*'
@@ -394,6 +394,17 @@ tokens are remembered on this machine. A bridge started with `--listen`
 answers other machines only for running tests, only from private LAN
 addresses and only with the token; it is not meant for the internet.
 
+A host needs no ROM images of its own (a lite package ships none): before
+each test is sent, the host is asked for the run's DME and KLR images by
+their SHA-256, and any it doesn't have are sent to it first, uploads, edited
+images and setups included. An image the host already has (same bytes) isn't
+sent again; the host keeps them in `$DMEKLR_TMP/regress_roms`. With any
+image other than the default, the default 1989 image is offered too (when
+this machine has it): a lite host takes its debugger tables when no
+disassembly workbook describes the picked image. After updating to a version
+that sends images this way, restart each host's bridge: until it is
+restarted the host shows ✗ *its bridge is out of date* and takes no tests.
+
 Each `.dash.log` starts with the ROM images the run used (`DME: [ROM] <file>
 sha=<hash>`). The dashboard shows them in the header and uses them to fetch
 the right map graphs.
@@ -423,19 +434,23 @@ the right map graphs.
 | Tab | Shows |
 |---|---|
 | **DME OVERVIEW** | Tiles for engine speed, fuel pulse, dwell, lambda correction, accel enrichment, AFM, TPS state, coolant, air temp, battery, load index, ISV step, estimated AFR, ICV PWM and the overload timer, each with the run's min and max. Below them are all the key registers and the control flags (hover a flag for its description) |
-| **DME PORTS** | P1, P2 and P3 pin by pin |
-| **DME IRAM** | All 128 bytes of internal RAM, colour-coded by group, with sub-tabs (ADC, fuel/load, ignition, lambda, flags, RPM/crank, enrich/ISV, system, work area). Hover a byte for its name and meaning |
+| **DME PORTS** | P1, P2 and P3 pin by pin. The three boxes line up at the top, each headed by the port's hex and binary value (a dimmed `0x--` when the log has no port values; hover a cut-off heading for its full text). Only some snapshots carry the port bytes, so between them the last values are held instead of blinking to `?` |
+| **DME IRAM** | All 128 bytes of internal RAM, colour-coded by group, with sub-tabs (ADC, fuel/load, ignition, lambda, flags, RPM/crank, enrich/ISV). Hover a byte for its name and meaning. On **ENRICH/ISV** the ISV's high/low byte pairs are one 16-bit row each (hex, decimal and both bytes in binary): ISV on-time `41h:42h`, ISV off-time `45h:44h` and the ISV integral `7Eh:7Dh` |
 | **DME CHARTS** | RPM, load index, AFM, TPS, injector pulse, lambda correction, ignition advance and its target, ISV, ICV duty, dwell, coolant, FQS and the overload timer against time |
 | **DME RPM CHARTS** | The same series as scatter plots against engine speed |
 | **DME PHASE** | The DME's `[PHASE]` events (resets, sync, mode changes) as a list |
 | **DME DIAG** | The diagnostic stream the DME would send (`send_diag_p2` pages), as a table and a chart, and the serial diagnostics on RXD/TXD (a tester you switch on, and a peek address for 7Ah) |
 | **DME MAPS / DME RPM MAPS** | Every numbered map and directly addressed table lookup the firmware made, against time or against RPM (section 9) |
-| **KLR OVERVIEW** | KLR state and the boost-control view (target boost from the map compared with the measured value) |
+| **KLR OVERVIEW** | KLR state and the boost-control view (target boost from the map compared with the measured value). Below them are the key boost and knock registers (MAP, PID terms, CV duty, knock integrator and thresholds, per-cylinder retard, blink codes) and the control flags (hover a register or flag for its description) |
 | **KLR PORTS / KLR IRAM** | The 8048's ports and its 64 bytes of RAM |
 | **KLR CHARTS / KLR RPM CHARTS** | Knock retard, coil pulse, knock output and count, boost, full load and more, against time or RPM |
 | **KLR PHASE / KLR DIAG** | KLR events and diagnostics |
 | **KLR MAPS / KLR RPM MAPS** | The KLR's boost, cycling-valve, PID-gain and RPM tables |
 | **TIMELINE** | DME and KLR on one time axis, plus your own picks of any RAM byte, bit or map (section 9) |
+
+![DME PORTS: the three port boxes aligned, with each port's value in its heading](manual/log-dme-ports.png)
+
+![DME IRAM, ENRICH/ISV: the ISV on-time, off-time and integral as 16-bit rows](manual/log-dme-iram-enrich-isv.png)
 
 ---
 
@@ -460,8 +475,13 @@ a log in any of three ways; each one loads it straight away:
   * Type in the **filter** box to narrow the list. Every word must match the
     test name, simulator or ROM folder, so `cl verilator 86` finds the
     Verilator closed-loop runs on the 1986 images.
-  * **Include Verilator logs** and **Include iverilog logs** hide either kind.
-    Both are checked each time the dialog opens.
+  * **Include Verilator logs**, **Include iverilog logs** and **Include Live
+    logs** hide each kind. **Live** logs (purple) are the captures from live
+    mode ([Capturing a log](#capturing-a-log), in `<rom>/live_dash_logs`). All
+    three are checked each time the dialog opens.
+
+    ![LOAD LOG listing a capture as a Live log](manual/load-log-live.png)
+
   * Click a column heading (**Test**, **Simulator**, **ROM**, **Modified**, **Size**)
     to sort by it, and click it again to reverse. The list starts newest first.
   * Without the bridge, the dialog says how to start it in place of the list.
@@ -551,13 +571,57 @@ running you see **● OFFLINE** and a red note telling you how to start it.
 | **● RUNNING / PAUSED / OFFLINE**, `t=… ms` | Sim state and simulated time. While running it also shows the speed, about 20 simulated ms per second (roughly 50× slower than real time) |
 | `stopped: …` | Why it stopped: `start`, `pause`, `until`, `step`, a breakpoint (with its condition and the value it saw) or a warning |
 | **▶ RUN / ⏸ PAUSE** | Free-run and stop |
-| **↺ RESTART** | Kill the sim and start again at t=0 on the loaded ROM images |
-| **FOLLOW** | Keep every scrubber and chart cursor on the newest data. Untick it to look back while the sim runs on |
+| **↺ RESTART** | Kill the sim and start again at t=0 on the loaded ROM images. Breakpoints (with their conditions) stay set |
 | **RESOLUTION** *ms* | Simulated time between the snapshots that make the live stats and charts, 1 to 10000 ms (the build's own, normally 100 ms, until you change it). Type a value and press **Enter** (or click away); **Esc** cancels. Smaller is finer but slows the sim and keeps less history. It stays through restarts and snapshot loads. Greyed out on a simulator built before this setting: rebuild it (`./build_live.sh`) |
+| *name* **💾 CAPTURE LOG** | Save the run so far as a log in the regression tests' format (`<rom>/live_dash_logs/<name>.dash.log`, listed in **LOAD LOG** as **Live**), with basic checks on it (see [Capturing a log](#capturing-a-log)). Works when paused, greyed out while running. Pressed at t=0 it arms the capture, which saves by itself the next time the sim stops |
 | **✕ DISCONNECT** | Leave live mode. The sim keeps running in the bridge |
 
 Step, RUN TO and breakpoints are in the **DME CODE** and **KLR CODE** windows
 (section 6).
+
+#### Capturing a log
+
+![A capture with its checks under the run bar](manual/live-capture-log.png)
+
+**💾 CAPTURE LOG** saves everything the sim has sent since t=0 (or since the
+snapshot it was loaded from) as a log in the regression tests' format, in the
+ROM pair's folder: `$DMEKLR_TMP/dme_klr/<rom>/live_dash_logs/<name>.dash.log`,
+plus `<name>.log.gz` with every line the sim printed. Type a name in the box
+beside the button, or leave it empty for `live_<date>-<time>`; a name already
+used gets `-2`, `-3`, ... The log always starts at t=0, so you can capture
+whenever the sim is paused; it is greyed out while running.
+
+Pressed at t=0, before anything has run, the button **arms** the capture
+instead: the run bar shows **● ARMED: <name>** (**✕** cancels it), and the log
+from t=0 is saved by itself the next time the sim stops: a PAUSE, a
+breakpoint, RUN TO or a full history. It stays armed through a RESTART.
+
+![CAPTURE LOG armed at t=0](manual/live-capture-armed.png)
+
+**LOAD LOG** lists captures as **Live** logs (purple), and they open like any
+regression log. A live run has no expected values, so a capture gets only
+basic checks: both ROMs named, DME and KLR snapshots present and well formed,
+time only going forward with no gaps, RPM, injector pulse and ADC bytes in
+range, the battery ADC converting, the main relay held low after sync,
+ignition pulsing while the engine turns, and no unimplemented KLR opcode.
+The result shows under the run bar as **PASS**, **WARN** or **FAIL** with each
+check (a `[WARN]` line, a DEADLOCK or repeated WATCHDOG STALLED is a warning).
+The same checks from a terminal:
+`python3 dme_klr/check_capture_log.py <name> <file>.dash.log`.
+
+A capture that would leave less than 1 GB free on the disk is refused, and a
+write that fails part way removes the half-written files, so **LOAD LOG**
+never lists a cut-off capture.
+
+![HISTORY FULL: the sim paused with the whole run still held](manual/live-history-full.png)
+
+The bridge holds the last 500,000 lines of the run, about 22 simulated
+minutes at idle and less at high RPM, and that is the most a capture can
+hold. When it fills, the bridge pauses the sim and a **HISTORY FULL · PAUSED**
+box offers **💾 CAPTURE LOG**, which saves the whole run from t=0 before any
+of it is lost, and **▶ CONTINUE (EARLIEST DATA LOST)**, which runs on and
+drops the oldest half of the history. A capture after that warns that its
+start is missing. The next time the history fills, the sim pauses again.
 
 **ROM IMAGES**: the image in each EPROM and the disassembly workbook its
 listing comes from. See [section 10](#10-rom-images).
@@ -579,12 +643,34 @@ comes out of the torque balance.
 | FQS (ch7) | Fuel-quality switch position 0-7 | Also scales the model's fuel energy, as the FQS tests do |
 | COOLANT, AIR TEMP, BATTERY, ALTITUDE | DME ADC ch3, ch2, ch1, ch4 | Raw bytes. The hints give the common values |
 | AC (T1) | AC compressor load | The ISV should catch it |
-| CAT (T0) | Catalytic converter fitted / not fitted | The firmware reads T0 as its has-cat flag (0 = fitted, the default) |
+| CAT (T0) | Catalytic converter fitted / not fitted | The firmware reads T0 as its has-cat flag (0 = fitted, the default). It picks the lambda step maps and, with variant_map_select, the non-cat ignition maps; no RAM byte holds it, so watch it on the code pane (P3.4 beside a `JB T0` / `MOV C,T0` row). Kept across a RESTART |
 | O2 SENSOR | DME P1.6/P1.7 (the O2 comparator outputs) | **auto** follows the model's mixture. LEAN, CROSS and RICH pin the sensor there |
 | KNOCK (KLR) | KLR knock sensor | **×N REVS** injects knock on the next N crank revolutions (the `TEST_KNOCK_PULSE` drop, 32 teeth after TDC), counting down as it goes. **CONTINUOUS** keeps knocking until **STOP**. The engine has to be turning |
 
 A slider sends its value when you let go. Ticking **auto** hands the input
 back to the model.
+
+#### Region, altitude and CAT settings
+
+The ALTITUDE byte (DME ADC ch4) carries both the altitude and the region
+coding plug, and the CAT input (T0 / P3.4) picks the catalytic converter
+setting. Together they set three flag bits and choose the maps. Set ALTITUDE
+to one of the values below and CAT to fitted (0) or not fitted (1):
+
+| Region and altitude | ALTITUDE (ch4, 14h) | LAMBDA_ENABLE (20h.7) | High altitude (25h.7) | REGION_CODE (25h.6) | Maps, CAT fitted (T0 = 0) | Maps, no CAT (T0 = 1) |
+|---|---|---|---|---|---|---|
+| US, below 1000 m | 0xF8 (248) | 1 | 0 | 0 | base | base |
+| US, above 1000 m | 0x00 (0) | 1 | 1 | 0 | base | base |
+| RoW, below 1000 m | 0x99 (153) | 0 | 0 | 1 | noncat | var3 |
+| RoW, above 1000 m | 0x56 (86) | 0 | 1 | 1 | noncat | var3 |
+
+The flag bits are the same whatever the CAT setting; CAT changes only which
+maps a RoW car uses. A US car always runs closed-loop lambda (20h.7 = 1) on
+the base maps. The RoW plug sets REGION_CODE, which turns closed-loop lambda
+off. The 1986 DME image has no LAMBDA_ENABLE bit: its closed-loop code tests
+REGION_CODE (25h.6) directly, and 20h.7 stays 0 for every region, so on that
+image the 20h.7 column does not apply. The regression tests `idle_region_row` and `idle_region_row_high_alt`
+(Appendix A) run the two RoW rows.
 
 **SIM WARNINGS**: any `[WARN]`, `WARNING` or `ERROR` line from the model,
 newest first. A 📷 beside a warning means a snapshot was saved there. Click it
@@ -605,8 +691,13 @@ timeline and both code debuggers across your screens while the sim runs.
 
 * Allow pop-ups for the page. If the browser blocks one, the page tells you.
 * The windows share the page's single connection to the bridge, so they all
-  show the same run. Each has its own scrubber in the title area. Its title
-  says `FOLLOW off` when FOLLOW is unticked.
+  show the same run. Each has its own scrubber under the title bar and its
+  own **FOLLOW** checkbox at the right of it. Ticked (the default), the
+  window keeps its scrubber and chart cursor on the newest data. Untick it,
+  or move that window's scrubber, play it back or click a point on one of its
+  charts, and that window stays where it is while the sim and the other
+  windows run on; its title then says `held at t=… ms`. Tick it again to jump
+  back to the newest data.
 * Clicking a tab button again brings its window to the front. Closing the main
   page closes them all. A window that hits an error shows it there, with
   **TRY AGAIN**, and the rest keep working.
@@ -632,9 +723,9 @@ instruction trace for that CPU.
 | Control | Does |
 |---|---|
 | **▶ RUN / ⏸ PAUSE** | As on the main page |
+| **↺ RESTART** | As on the main page: kill the sim and start again at t=0 on the loaded ROM images (with any byte edits). Breakpoints stay set, and disabled ones stay listed |
 | *N* + **STEP DME** / **STEP KLR** | Run until this CPU has executed *N* instructions, then pause the whole simulation. Both CPUs share one simulated clock, so the other CPU only advances over that same short interval (a few instructions at most) and stops at the same moment |
 | *ms* + **RUN TO** (or Enter) | Run until that simulated time, then pause |
-| **↺ RESTART** | As on the main page: kill the sim and start again at t=0 on the loaded ROM images (with any byte edits) |
 
 The window title also shows the state and time, so you can tell where the
 sim is from any window.
@@ -744,7 +835,12 @@ the saved image with **⬇ \<name\>.bin** instead (step 1 below).
 **Setups.** The **SETUP** picker in the ROM IMAGES row lists the three
 developer pairs and the saved setups. **LOAD SETUP** (paused) loads both
 images, restarting at t=0 when **RESTART AFTER LOAD** is ticked; **✕** deletes a
-saved setup (the images stay). In **RUN REGRESSIONS** a saved setup is in the
+saved setup (the images stay). **＋ NEW** (or **＋ New setup…** at the
+bottom of the picker) makes a setup from scratch: type a name, pick the DME
+and KLR images (any `.mem` the bridge lists: the repo's, uploaded ones and
+images saved from edits, marked **(edited)**) and **SAVE SETUP**. A saved
+setup's name again replaces it (**REPLACE SETUP**); the built-in names are
+taken. In **RUN REGRESSIONS** a saved setup is in the
 ROM pair list as `<name> (setup)`: picking it runs every test on those two
 images (`DME_ROM_FILE` / `KLR_ROM_FILE`), with the logs in the DME image's
 folder, `tmp/dme_klr/<image name>`. Setups are kept in `obj/roms/setups.json`.
@@ -940,6 +1036,7 @@ gives the same run as the original from that moment on.
 | **AUTO ON WARNING** | Save one on each warning or error. At most once per simulated second per kind of warning, and 25 per run |
 | **PAUSE ON WARNING** | Also pause after each warning's snapshot |
 | **UPLOAD .dmesnap** | Add a snapshot downloaded earlier |
+| **✕ CLEAR TESTS (n)** | Delete all n regression test snapshots (the **TEST** rows). Asks "are you sure" with the count first; your other snapshots stay |
 | **LOAD** | Restart the sim from it, paused (asks first if the sim is running) |
 | **INFO** | Saved time, trigger, PCs, inputs, ROM identity (SHA-256, CRC32, listing), CPU registers, breakpoints |
 | **⬇** | Download it as one `.dmesnap` file |
@@ -1190,7 +1287,7 @@ flowchart TB
     BIN["EPROM Dump<br/>.bin"]
     HEX["Intel HEX<br/>.hex"]
     MEM["Simulator Image<br/>.mem (One Byte Per Line)"]
-    SIM["DME / KLR Model<br/>Loads It With $readmemh"]
+    SIM["DME / KLR Model<br/>Loads It With #36;readmemh"]
 
     BIN -- "bin2intelhex.py" --> HEX
     HEX -- "intelhex2veriloghex.py (DME)<br/>hex2mem48.py (KLR)" --> MEM
@@ -1391,6 +1488,25 @@ the same speed; the machine they were measured on has only 4.
 | `isv_cold_idle` | 60 s | 39 min | Idle valve opening and closing during a cold idle |
 | `isv_load_droop` | 12 s | 8 min | RPM dips to 650 for 0.5 s at 5 s, to see the idle valve respond |
 
+### <a id="tests-region-altitude-and-cat"></a>Region, altitude and cat
+
+The region coding plug and altitude switch (ch4), the cat switch (T0) and DME pin 28 (ch5). The ramp tests run `cl_ramp_to_3000` / `cl_ramp_to_6000` with one setting changed and check the change in fuel and ignition timing against that baseline ramp (cat fitted, US below 1000 m), so run the baseline in the same batch.
+
+| Test | Time | Run time | What it checks |
+|---|---|---|---|
+| `idle_region_row` | 5 s | 3 min | Idle with the RoW region coding plug (1.8k): ch4 0x99, ~3.0V, below 1000 m. Sets REGION_CODE (25h.6), which turns closed-loop lambda off (O2 reads lean) |
+| `idle_region_row_high_alt` | 5 s | 3 min | RoW plug above 1000 m: ch4 0x56, ~1.7V. Sets REGION_CODE (25h.6) and the high-altitude flag (25h.7); lambda off as above |
+| `idle_no_cat` | 5 s | 3 min | No catalytic converter (T0 = 1) from the start; both O2 pins held at 0, as a non-cat car has no O2 sensor |
+| `pin28_open` | 5 s | 3 min | DME pin 28 (ADC ch5) open (0xE2): alternate idle-valve path |
+| `cl_ramp_to_3000_NO_CAT` | 30 s | 20 min | `cl_ramp_to_3000` with no cat (T0 = 1): both O2 pins held at 0. Fuel and timing checked against `cl_ramp_to_3000` |
+| `cl_ramp_to_3000_ROW` | 30 s | 20 min | `cl_ramp_to_3000` with the RoW region plug (ch4 0x99): lambda off. Fuel and timing checked against `cl_ramp_to_3000` |
+| `cl_ramp_to_3000_ROW_HIGH_ALT` | 30 s | 20 min | `cl_ramp_to_3000`, RoW above 1000 m (ch4 0x56): lambda off, high-altitude fuel scaling, 0.88 air density. Fuel and timing checked against `cl_ramp_to_3000` |
+| `cl_ramp_to_3000_PIN28_OPEN` | 30 s | 20 min | `cl_ramp_to_3000` with DME pin 28 open (ch5 0xE2). Fuel and timing checked against `cl_ramp_to_3000` |
+| `cl_ramp_to_6000_NO_CAT` | 40 s | 28 min | As above, on `cl_ramp_to_6000` |
+| `cl_ramp_to_6000_ROW` | 40 s | 28 min | As above, on `cl_ramp_to_6000` |
+| `cl_ramp_to_6000_ROW_HIGH_ALT` | 40 s | 28 min | As above, on `cl_ramp_to_6000` |
+| `cl_ramp_to_6000_PIN28_OPEN` | 40 s | 28 min | As above, on `cl_ramp_to_6000` |
+
 ### <a id="tests-fuel-quality-sweeps"></a>Fuel-quality sweeps
 
 | Test | Time | Run time | What it checks |
@@ -1482,11 +1598,51 @@ with a `-D` define.
 
 ### The loop
 
-```
- driver throttle ──► TPS / AFM ──► DME firmware ──► injector pulse (4B:4A)
-                        ▲                                   │
-                        │                                   ▼
-         MAP, O2, KLR ◄─┴──── RPM ◄──── torque balance (once per rev)
+```mermaid
+flowchart TB
+    DRV(["Driver<br/>Throttle Command"])
+
+    subgraph SENS["Sensor Models"]
+        direction LR
+        AFM["AFM + Throttle<br/>Follows Driver<br/>250 ms Lag"]
+        O2["O2 Sensor<br/>Delivered Mixture<br/>150 ms Exhaust Delay"]
+        MAP["MAP / Boost<br/>Vacuum, Then KLR Target<br/>500 ms Spool Lag"]
+        AFM ~~~ O2 ~~~ MAP
+    end
+
+    subgraph FW["Firmware Under Test"]
+        direction LR
+        DME["DME<br/>Intel 8051"]
+        KLR["KLR<br/>Intel 8048"]
+        DME <-- "Trigger / Full Load" --> KLR
+    end
+
+    subgraph ENG["Engine Model"]
+        direction LR
+        TQ["Torque Balance<br/>Once Per Rev"]
+        RPM["RPM<br/>Clamped 400 to 6800"]
+        CRK["Crank Signals<br/>Speed + Reference"]
+        TQ --> RPM --> CRK
+    end
+
+    DRV --> SENS
+    SENS == "Sensor Inputs" ==> FW
+    FW == "Injector Pulse<br/>iram 4B:4A" ==> ENG
+    ENG -. "RPM, Crank Pulses" .-> SENS
+
+    classDef driver fill:#fff4d6,stroke:#c99a1e,stroke-width:2px,color:#3d2e00
+    classDef sensor fill:#e6f2ff,stroke:#3a7bd5,stroke-width:2px,color:#0b2545
+    classDef fw fill:#e9f7ec,stroke:#2e8b57,stroke-width:2px,color:#0f3d24
+    classDef engine fill:#fdecea,stroke:#c0392b,stroke-width:2px,color:#4a0f0a
+    class DRV driver
+    class AFM,O2,MAP sensor
+    class DME,KLR fw
+    class TQ,RPM,CRK engine
+    style SENS fill:#f4f8fd,stroke:#3a7bd5,stroke-dasharray:4 3,color:#0b2545
+    style FW fill:#f3faf5,stroke:#2e8b57,stroke-dasharray:4 3,color:#0f3d24
+    style ENG fill:#fdf5f4,stroke:#c0392b,stroke-dasharray:4 3,color:#4a0f0a
+    linkStyle 2,3,4,5,8 stroke:#8a8f98,stroke-width:2px
+    linkStyle 6,7 stroke:#8a8f98,stroke-width:3px
 ```
 
 ### Engine (RPM)
@@ -1532,7 +1688,8 @@ with it. Fault tests stop, short or remove these signals at a set time.
 | **Throttle switch** (ch6) | Closed (0x99, about 3.0 V) when the throttle is at idle; off-idle or full-load levels when it opens. The KLR's full-load line reaches ch6 through the real board's RC filter (about 4.7 ms) |
 | **Battery** (ch1) | Fixed at 0xD8 unless a test lowers or disconnects it |
 | **Air temp / coolant** (ch2 / ch3) | Fixed raw sensor values for the test (warm: coolant 0x31 ≈ 85 °C, air 0x9E ≈ 20 °C); the firmware linearises them |
-| **Altitude** (ch4) | Fixed (0xF8 = sea level). At altitude the AFM reads flow × √(air density), as a flap meter does |
+| **Altitude** (ch4) | Fixed (0xF8 = US, sea level; the RoW region plug gives 0x99 / 0x56, see `idle_region_row`). At altitude the AFM reads flow × √(air density), as a flap meter does |
+| **Pin 28** (ch5) | 0x00: the harness grounds DME pin 28, the low end of the board's 2.2k pull-up (R681). The firmware keeps it in 15h and takes the alternate idle-valve path only when it reads 0x80 or more; the `pin28_open` test models the pin left open (0xE2) |
 | **Fuel quality** (ch7) | Fixed per test (the FQS0 to FQS7 positions) |
 | **O2 sensor** (P1 comparators) | Follows the mixture the firmware actually delivers: injected fuel ÷ load, rich above 1.025. The result passes through 150 ms of exhaust delay and a 30 ms sensor lag between 100 mV (lean) and 850 mV (rich), then the two comparators at 450 and 550 mV. With no injection the exhaust reads lean. This lets the lambda integrator (iram 1Bh) cycle around stoich as on the car |
 | **AC, cat** (T1, T0) | On/off per test, or switched at set times in the condition-cycle tests |
